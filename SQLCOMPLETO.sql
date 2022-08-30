@@ -315,6 +315,15 @@ FROM Production.Product;
 SELECT UnitPrice + LineTotal
 FROM Sales.SalesOrderDetail;
 
+SELECT UnitPrice - LineTotal
+FROM Sales.SalesOrderDetail;
+
+SELECT UnitPrice * LineTotal
+FROM Sales.SalesOrderDetail;
+
+SELECT UnitPrice / LineTotal
+FROM Sales.SalesOrderDetail;
+
 /* SUBQUERY */
 
 SELECT * 
@@ -323,4 +332,293 @@ FROM Production.Product
 SELECT * 
 FROM Production.Product
 WHERE  ListPrice > (SELECT AVG(listPrice) from Production.Product);
+
+SELECT * 
+FROM HumanResources.Employee
+WHERE JobTitle = 'Design Engineer';
+
+SELECT FirstName
+FROM Person.Person
+WHERE BusinessEntityID in(5,6,15);
+
+SELECT FirstName 
+FROM Person.Person
+WHERE BusinessEntityID IN (
+SELECT BusinessEntityID FROM HumanResources.Employee
+WHERE JobTitle = 'Design Engineer');
+
+SELECT P.FirstName 
+FROM Person.Person P
+INNER JOIN HumanResources.Employee E ON P.BusinessEntityID = E.BusinessEntityID
+AND E.JobTitle = 'Design Engineer';
+
+SELECT * 
+FROM Person.Address;
+
+SELECT * 
+FROM Person.StateProvince;
+
+SELECT AddressLine1 
+FROM Person.Address
+WHERE StateProvinceID IN ( 
+SELECT StateProvinceID 
+FROM Person.StateProvince
+WHERE Name = 'Alberta');
+
+SELECT pa.AddressLine1
+FROM Person.Address pa 
+INNER JOIN Person.StateProvince ps ON pa.StateProvinceID = ps.StateProvinceID
+AND name = 'Alberta';
+
+/* SELF JOIN */
+
+USE Northwind
+
+SELECT A.ContactName, B.ContactName
+FROM Customers A, Customers B
+WHERE A.Region = B.Region;
+
+SELECT A.FirstName, A.hireDate, B.FirstName, B.hireDate
+FROM Employees A, Employees B
+WHERE DATEPART(YEAR, A.hireDate) = DATEPART(YEAR, B.hireDate);
+
+SELECT *
+FROM [Order Details];
+
+SELECT A.ProductID, A.Discount, B.ProductId, B.Discount
+FROM [Order Details] A, [Order Details] B 
+WHERE A.Discount = B.Discount;
+
+/* CREATE TABLE*/
+CREATE DATABASE Youtube;
+
+USE Youtube;
+
+CREATE TABLE Canal(
+CanalId INT PRIMARY KEY,
+Nome VARCHAR(150) NOT NULL,
+ContagemInscritos INT DEFAULT 0,
+DataCriacao DATETIME NOT NULL
+);
+
+SELECT *
+FROM Canal;
+
+CREATE TABLE Video(
+VideoId INT PRIMARY KEY,
+Nome VARCHAR(150) NOT NULL,
+Visualizacoes INT DEFAULT 0,
+Likes INT DEFAULT 0,
+Dislikes INT DEFAULT 0,
+Duracao INT NOT NULL,
+CanalId INT FOREIGN KEY REFERENCES Canal(CanalId)
+);
+
+SELECT * 
+FROM Video;
+
+CREATE DATABASE Desafio;
+
+
+USE Desafio;
+
+
+CREATE TABLE TipoAlimento(
+TipoAlimentoId INT PRIMARY KEY,
+Nome VARCHAR(150) NOT NULL
+);
+
+CREATE TABLE Alimentos(
+AlimentoId INT PRIMARY KEY,
+Nome VARCHAR(150) NOT NULL,
+TipoAlimentoId INT FOREIGN KEY REFERENCES TipoAlimento(TipoAlimentoId)
+);
+
+CREATE TABLE Aula(
+id INT PRIMARY KEY,
+nome VARCHAR(200)
+);
+
+/*INSERT INTO*/
+
+INSERT INTO Aula(id, nome)
+VALUES(1,'aula1');
+
+SELECT * 
+FROM Aula;
+
+INSERT INTO Aula(id, nome)
+VALUES
+(2, 'aula 2'),
+(3, 'aula 3'),
+(4, 'aula 4');
+
+SELECT * 
+INTO tabelaNova 
+FROM aula;
+
+SELECT *
+FROM tabelaNova;
+
+CREATE TABLE Desafio(
+id INT PRIMARY KEY,
+nome VARCHAR(100)
+);
+
+INSERT INTO Desafio(id, nome)
+VALUES(1,'linha1');
+
+INSERT INTO Desafio(id, nome)
+VALUES 
+(2, 'linha2'),
+(3, 'linha3'),
+(4, 'linha4')
+
+CREATE TABLE Desafio2(
+id INT PRIMARY KEY,
+nome VARCHAR(100)
+);
+
+INSERT INTO Desafio2(id, nome)
+VALUES (1,'linha1');
+
+/* UPDATE */
+
+UPDATE aula 
+SET nome = 'newname';
+
+SELECT *
+FROM Aula;
+
+UPDATE Aula
+SET nome = 'newname1'
+WHERE id = 3;
+
+UPDATE Aula
+SET nome = 'newname2'
+WHERE id = 2;
+
+UPDATE Aula
+SET nome = 'newname3'
+WHERE id = 1;
+
+/* DELETE */
+
+DELETE FROM Aula
+WHERE id = 4;
+
+SELECT *
+FROM Aula;
+
+/* ALTER TABLE */
+
+CREATE TABLE youtube (
+id INT PRIMARY KEY,
+nome VARCHAR(150) NOT NULL UNIQUE,
+categoria VARCHAR(200) NOT NULL,
+dataCriacao DATETIME NOT NULL
+);
+
+SELECT * 
+FROM youtube;
+
+ALTER TABLE Youtube
+ADD ativo BIT;
+
+ALTER TABLE Youtube
+ALTER COLUMN categoria VARCHAR(300) NOT NULL;
+
+EXEC sp_RENAME 'Youtube.nome', 'nomeCanal', 'COLUMN';
+
+
+CREATE TABLE Desafio3(
+id INT PRIMARY KEY,
+nome VARCHAR(100),
+email VARCHAR(150)
+);
+
+ALTER TABLE Desafio3
+ALTER COLUMN nome VARCHAR(200);
+EXEC sp_RENAME 'Desafio3.nome', 'desafioNome', 'COLUMN';
+EXEC sp_RENAME 'Desafio3', 'DesafioRename';
+
+SELECT *
+FROM DesafioRename;
+
+/* DROP TABLE */
+
+DROP TABLE DesafioRename;
+
+CREATE TABLE tabela1 (
+id INT PRIMARY KEY,
+nome VARCHAR(200) 
+);
+
+CREATE TABLE tabela2 (
+id INT PRIMARY KEY,
+nome VARCHAR(200) 
+);
+
+DROP TABLE tabela1;
+DROP TABLE tabela2;
+
+/* CHECK CONSTRAINT */
+
+CREATE TABLE CarteiraMotorista(
+id INT NOT NULL,
+nome VARCHAR(255) NOT NULL,
+idade INT CHECK (idade >= 18)
+);
+
+SELECT * FROM CarteiraMotorista;
+
+INSERT INTO CarteiraMotorista (id, nome, idade)
+VALUES (1, 'joao', 17);
+
+
+CREATE TABLE MontanhaRussa(
+id INT NOT NULL,
+nome VARCHAR(255) NOT NULL,
+altura INT CHECK (altura >= 150)
+);
+
+CREATE TABLE EleicaoVotos(
+id INT NOT NULL,
+nome VARCHAR(255) NOT NULL,
+idade INT CHECK (idade >= 16)
+);
+
+/* NOT NULL CONSTRAINT */
+
+INSERT INTO CarteiraMotorista (id,nome,idade)
+VALUES (2,,18)
+
+/* UNIQUE */
+CREATE TABLE Usuario(
+id INT PRIMARY KEY,
+nome VARCHAR(200) NOT NULL,
+email VARCHAR(200) UNIQUE
+);
+
+CREATE TABLE Admin(
+id INT PRIMARY KEY,
+nome VARCHAR(200) NOT NULL,
+chaveacesso VARCHAR(200) UNIQUE
+);
+
+INSERT INTO Usuario 
+VALUES 
+(1, 'Carlos', 'Carlos@gmail.com'),
+(2, 'Carlos', 'Carlos1@gmail.com');
+
+/* VIEWS */
+
+USE AdventureWorks2017
+
+CREATE VIEW [Pessoas Simplicado] AS
+SELECT FirstName, MiddleName, LastName
+FROM Person.Person
+WHERE Title = 'MS.'
+
+SELECT * FROM [Pessoas Simplicado]
 
